@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  www:
+    build: .
+    container_name: www
+    ports:
+      - 8000:80
+    volumes:
+      - ./src:/var/www/html/
+    depends_on:
+      - maildev
+    networks:
+      - bridge_dev
+  db:
+    image: mariadb
+    container_name: db
+    environment:
+      MYSQL_DATABASE: myDb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: test
+      MYSQL_ROOT_PASSWORD: test
+    volumes:
+      - persistent_mysql:/var/lib/mysql
+    networks:
+      - bridge_dev
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - 9000:80
+    environment:
+      MYSQL_USER: user
+      MYSQL_PASSWORD: test
+      MYSQL_ROOT_PASSWORD: test
+    networks:
+      - bridge_dev
+  maildev:
+    image: maildev/maildev
+    container_name: maildev
+    ports:
+      - 1080:80
+    networks:
+      bridge_dev:
+        aliases:
+          - maildev
+
+volumes:
+  persistent_mysql:
+    driver: local
+
+networks:
+  bridge_dev:
+    driver: bridge

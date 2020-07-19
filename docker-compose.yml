@@ -8,8 +8,6 @@ services:
       - 8000:80
     volumes:
       - ./src:/var/www/html/
-    depends_on:
-      - maildev
     networks:
       - bridge_dev
   db:
@@ -27,6 +25,8 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
+    depends_on:
+      - db
     ports:
       - 9000:80
     environment:
@@ -38,6 +38,8 @@ services:
   maildev:
     image: maildev/maildev
     container_name: maildev
+    depends_on:
+      - www
     ports:
       - 1080:80
     networks:
